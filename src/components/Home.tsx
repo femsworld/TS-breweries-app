@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ResponsiveAppBar from './ResponsiveAppBar'
 
 interface Brewery {
     id: string
@@ -32,6 +33,7 @@ const Home = () => {
     }
     return (
         <div>
+            <ResponsiveAppBar/>
             <input type="text"
                 placeholder='Search for brewery'
                 value={search}
