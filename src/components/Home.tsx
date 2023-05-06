@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import ResponsiveAppBar from './ResponsiveAppBar'
+import SearchAppBar from './SearchAppBar'
 
 interface Brewery {
     id: string
@@ -12,7 +12,7 @@ interface Brewery {
 const Home = () => {
     const [breweries, setBreweries] = useState<Brewery[]>([])
     const [search, setSearch] = useState("")
-    console.log("Component is rendered")
+    // console.log("Component is rendered")
     useEffect(() => {
         fetch("https://api.openbrewerydb.org/v1/breweries/").then(
             data => data.json()
@@ -33,7 +33,7 @@ const Home = () => {
     }
     return (
         <div>
-            <ResponsiveAppBar/>
+            <SearchAppBar/>
             <input type="text"
                 placeholder='Search for brewery'
                 value={search}
@@ -42,7 +42,10 @@ const Home = () => {
             
 {/*             <button></button> */}
             {breweries.map(item => (
-                <p key={item.name}>{item.name}</p>
+                <div>
+                <div key={item.name}>{item.name}</div>
+                <div key={item.id}>{item.id}</div>
+                </div>
             ))}
         </div>
     )
