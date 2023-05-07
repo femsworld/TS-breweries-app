@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -8,6 +10,21 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+
+interface SearchProps {
+  getSearchResult: (search: string) => void
+}
+
+const useInput = () => {
+  const [value, setValue] = useState("")
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value)
+  }
+  return {
+      value,
+      onChange
+  }
+}
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -51,7 +68,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar(props: SearchProps) {
+  const keyword = useInput() // call the custom hooks here
+
+  useEffect(() => {
+    props.getSearchResult(keyword.value)
+}, [keyword]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
@@ -71,7 +94,7 @@ export default function SearchAppBar() {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            MUI
+            Home
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -80,6 +103,7 @@ export default function SearchAppBar() {
             <StyledInputBase
               placeholder="Search for brewery…"
               inputProps={{ 'aria-label': 'search' }}
+              {...keyword}
             />
           </Search>
         </Toolbar>

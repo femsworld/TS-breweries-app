@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import SearchAppBar from './SearchAppBar'
+import Details from './Details';
 
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -9,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Link } from 'react-router-dom';
 
 export interface Brewery {
     id: string
@@ -16,6 +18,10 @@ export interface Brewery {
     brewery_type: string
     city: string
     country: string
+}
+
+interface SearchProps {
+  getSearchResult: (search: string) => void
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -38,7 +44,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
-const Home = () => {
+const Home = (props: SearchProps) => {
     const [breweries, setBreweries] = useState<Brewery[]>([])
     const [search, setSearch] = useState("")
     // console.log("Component is rendered")
@@ -47,7 +53,6 @@ const Home = () => {
             data => data.json()
         ).then( 
             (data: Brewery[]) => {
-                // setBreweries(data.filter(c => c.name.common.includes(search)))
                 setBreweries(data.filter(c => c.name.includes(search)))
             })
         return () => {
@@ -62,46 +67,34 @@ const Home = () => {
     }
     return (
         <div>
-            <SearchAppBar/>
-            {/* <input type="text"
-                placeholder='Search for brewery'
-                value={search}
-                onChange={(e) => handleSearch(e)}
-            />
-            {breweries.map(item => (
-                <div>
-                <div key={item.id}>{item.id}</div>
-                <div key={item.name}>{item.name}</div>
-                <div key={item.brewery_type}>{item.brewery_type}</div>
-                <div key={item.city}>{item.city}</div>
-                <div key={item.country}>{item.country}</div>
-                </div>
-            ))} */}
+            <SearchAppBar getSearchResult={props.getSearchResult}/>
             <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align="right">ID</StyledTableCell>
-            <StyledTableCell align="right">Name</StyledTableCell>
-            <StyledTableCell align="right">Brewery Type</StyledTableCell>
-            <StyledTableCell align="right">City</StyledTableCell>
-            <StyledTableCell align="right">Country</StyledTableCell>
-            <StyledTableCell align="right">Details</StyledTableCell>
+            <StyledTableCell align="center"></StyledTableCell>
+            <StyledTableCell align="center">ID</StyledTableCell>
+            <StyledTableCell align="center">Name</StyledTableCell>
+            <StyledTableCell align="center">Brewery Type</StyledTableCell>
+            <StyledTableCell align="center">City</StyledTableCell>
+            <StyledTableCell align="center">Country</StyledTableCell>
+            <StyledTableCell align="center">Details</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {breweries.map(item => (
-            <StyledTableRow key={item.name}>
+          {breweries.map((item, index) => (
+            <StyledTableRow key={item.id}>
               <StyledTableCell component="th" scope="row">
-                {item.name}
+                {index + 1}
               </StyledTableCell>
-              <StyledTableCell align="right" key={item.id}>{item.id}</StyledTableCell>
-              <StyledTableCell align="right"key={item.name}>{item.name}</StyledTableCell>
-              <StyledTableCell align="right"key={item.brewery_type}>{item.brewery_type}</StyledTableCell>
-              <StyledTableCell align="right"key={item.city}>{item.city}</StyledTableCell>
-              <StyledTableCell align="right"key={item.country}>{item.country}</StyledTableCell>
-              <StyledTableCell align="right">
+              <StyledTableCell align="center" key={item.id}>{item.id}</StyledTableCell>
+              <StyledTableCell align="center"key={item.name}>{item.name}</StyledTableCell>
+              <StyledTableCell align="center"key={item.brewery_type}>{item.brewery_type}</StyledTableCell>
+              <StyledTableCell align="center"key={item.city}>{item.city}</StyledTableCell>
+              <StyledTableCell align="center"key={item.country}>{item.country}</StyledTableCell>
+              <StyledTableCell align="center"> <Link to={`/details/${item.id}`}>
                 <button>Detail</button>
+                </Link>
               </StyledTableCell>
             </StyledTableRow>
           ))}
