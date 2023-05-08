@@ -5,14 +5,10 @@ import Details from './components/Details'
 
 const App = () => {
   
-const [searchResult, setSearchResult] = useState("")
-const getSearchResult = (search: string) => {
-  setSearchResult(search)
-  }
   return (
     <BrowserRouter>
     <Routes>
-      <Route path='/' element={<Home getSearchResult={getSearchResult}/>} />
+      <Route path='/' element={<Home />} />
       <Route path='/details/:id' element={<Details />} />
     </Routes>
     </BrowserRouter>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import SearchAppBar from './SearchAppBar';
 
 const Details = () => {
     const {id} = useParams();
@@ -28,6 +29,7 @@ const Details = () => {
 
   return (
     <>
+    <SearchAppBar/>
     {console.log(detailsPage)}
     <div>
       Details

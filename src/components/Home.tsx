@@ -20,10 +20,6 @@ export interface Brewery {
     country: string
 }
 
-interface SearchProps {
-  getSearchResult: (search: string) => void
-}
-
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -44,32 +40,41 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
-const Home = (props: SearchProps) => {
+const Home = () => {
+    const [searchResult, setSearchResult] = useState("")
     const [breweries, setBreweries] = useState<Brewery[]>([])
-    const [search, setSearch] = useState("")
+
+    const getSearchResult = (search: string) => {
+      setSearchResult(search)
+      }
+
     // console.log("Component is rendered")
     useEffect(() => {
         fetch("https://api.openbrewerydb.org/v1/breweries/").then(
             data => data.json()
         ).then( 
             (data: Brewery[]) => {
-                setBreweries(data.filter(c => c.name.includes(search)))
+                setBreweries(data.filter(c => c.name.includes(searchResult)))
             })
         return () => {
            // clearTimeout()
         }
-    }, [search])
-    /* useEffect --> setCountries --> rerendered */
+    }, [searchResult])
 
     /** this function will wait for a while till be affected --> debounce */
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.target.value)
-    }
+    // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setSearch(e.target.value)
+    // }
+    
     return (
+      <>
+       {console.log("This is search result", searchResult)}
         <div>
-            <SearchAppBar getSearchResult={props.getSearchResult}/>
-            <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <div>
+            <SearchAppBar getSearchResult={getSearchResult}/>
+            </div>
+            <TableContainer className='TableContainer' component={Paper}>
+      <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
             <StyledTableCell align="center"></StyledTableCell>
@@ -102,6 +107,7 @@ const Home = (props: SearchProps) => {
       </Table>
     </TableContainer>
         </div>
+        </>
     )
 }
 

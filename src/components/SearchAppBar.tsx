@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface SearchProps {
-  getSearchResult: (search: string) => void
+  getSearchResult?: (search: string) => void
 }
 
 const useInput = () => {
@@ -72,7 +72,9 @@ export default function SearchAppBar(props: SearchProps) {
   const keyword = useInput() // call the custom hooks here
 
   useEffect(() => {
-    props.getSearchResult(keyword.value)
+    if(props.getSearchResult) {
+      props.getSearchResult(keyword.value)
+    }
 }, [keyword]);
 
   return (
