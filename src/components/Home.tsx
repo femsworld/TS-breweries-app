@@ -111,6 +111,12 @@ const Home = () => {
           setNPages(nPages)
         }
       }
+      // const filteredData = (data: any[]) => {
+      //   const newArray =  _.filter(data, (item) => item.name.toLowerCase().startsWith(searchResult.toLowerCase()))
+      //       return newArray
+      //     }
+      //     const data = searchResult ? filteredData(breweries) : breweries
+      
       fetch("https://api.openbrewerydb.org/v1/breweries/").then(
             data => data.json()
         ).then( 
@@ -120,6 +126,8 @@ const Home = () => {
         return () => {
            // clearTimeout()
         }
+        // getBreweryList(data)
+
     }, [searchResult, breweries, sortingOrder, currentPage, recordsPerPage]);
 
 

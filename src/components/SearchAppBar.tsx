@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import { Link } from 'react-router-dom';
 
 interface SearchProps {
   getSearchResult?: (search: string) => void
@@ -96,7 +97,7 @@ export default function SearchAppBar(props: SearchProps) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            Home
+            <h4 className='linkHome' style={{ color: 'aliceblue', textDecoration: 'none' }}> <Link to={`/`}> Home </Link></h4> 
           </Typography>
           <Search>
             <SearchIconWrapper>
