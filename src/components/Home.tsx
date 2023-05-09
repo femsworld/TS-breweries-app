@@ -69,23 +69,22 @@ const Home = () => {
       setSortingIconPosition(args === 'asc' ? 'caret-down' : 'caret-up')
   }
       
-  useEffect(() => {
-        fetch("https://api.openbrewerydb.org/v1/breweries/").then(
-            data => data.json()
-        ).then( 
-            (data: Brewery[]) => {
-                setBreweries(data.filter(c => c.name.includes(searchResult)))
-            })
-        return () => {
-           // clearTimeout()
-        }
-    }, [searchResult])
+  // useEffect(() => {
+  //       fetch("https://api.openbrewerydb.org/v1/breweries/").then(
+  //           data => data.json()
+  //       ).then( 
+  //           (data: Brewery[]) => {
+  //               setBreweries(data.filter(c => c.name.includes(searchResult)))
+  //           })
+  //       return () => {
+  //          // clearTimeout()
+  //       }
+  //   }, [searchResult])
 
     useEffect(() => {
       newList = [];
       indexOfLastRecord  = currentPage * recordsPerPage;
       indexOfFirstRecord  = indexOfLastRecord - recordsPerPage;
-  
       const getBreweryList = (breweries: any[]) => {
         if(sortingOrder === 'asc') {
           newList = breweries.sort(
@@ -112,15 +111,18 @@ const Home = () => {
           setNPages(nPages)
         }
       }
-  
-    }, [breweries, sortingOrder, currentPage, recordsPerPage]);
+      fetch("https://api.openbrewerydb.org/v1/breweries/").then(
+            data => data.json()
+        ).then( 
+            (data: Brewery[]) => {
+                setBreweries(data.filter(c => c.name.includes(searchResult)))
+            })
+        return () => {
+           // clearTimeout()
+        }
+    }, [searchResult, breweries, sortingOrder, currentPage, recordsPerPage]);
 
 
-    /** this function will wait for a while till be affected --> debounce */
-    // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setSearch(e.target.value)
-    // }
-    
     return (
       <>
         <div>
