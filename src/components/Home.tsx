@@ -21,9 +21,9 @@ export interface Brewery {
     country: string
 }
 
-// let newList: any[];
-// let indexOfLastRecord: number;
-// let indexOfFirstRecord: number;
+let newList: any[];
+let indexOfLastRecord: number;
+let indexOfFirstRecord: number;
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -48,39 +48,28 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const Home = () => {
     const [searchResult, setSearchResult] = useState("")
+    const [currentRecords, setCurrentRecords] = useState<any[]>(['']);
     const [breweries, setBreweries] = useState<Brewery[]>([])
     const [currentPage, setCurrentPage] = useState<number>(1);
-    // const [nPages, setNPages] = useState<number>(1);
-    // const [totalVisiblePageNumbers] = useState<number>(5);
-    // const [recordsPerPage] = useState<number>(5);
+    const [nPages, setNPages] = useState<number>(1);
+    const [totalVisiblePageNumbers] = useState<number>(5);
+    const [recordsPerPage] = useState<number>(5);
+    const [sortingOrder, setSortingOrder] = useState<string>('');
+    const [sortingIconPosition, setSortingIconPosition] = useState<string>('sort');
 
     const getSearchResult = (search: string) => {
       setCurrentPage(1)
       setSearchResult(search)
       }
 
-      // const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
-      //   const nPages = countries && countries.length && Math.ceil(countries.length / recordsPerPage);
-      //   setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
-      //   setNPages(nPages)
-      // } else if (sortingOrder === 'desc') {
-      //   newList = countries.sort(
-      //     (p1, p2) =>
-      //     (p1.name.common.toUpperCase() < p2.name.common.toUpperCase()) ? 1 : (p1.name.common.toUpperCase() > p2.name.common.toUpperCase()) ? -1 : 0
-      //   )
-      //   const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
-      //   const nPages = countries && countries.length && Math.ceil(countries.length / recordsPerPage);
-      //   setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
-      //   setNPages(nPages)
-      // } else {
-      //   const currentRecords = countries && countries.length && countries.slice(indexOfFirstRecord, indexOfLastRecord);
-      //   const nPages = countries && countries.length && Math.ceil(countries.length / recordsPerPage);
-      //   setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
-      //   setNPages(nPages)
-      // }
+      const setCurrent = (curr: number) => setCurrentPage(curr);
 
-    // console.log("Component is rendered")
-    useEffect(() => {
+      const sort = (args: string) => {
+      setSortingOrder(args)
+      setSortingIconPosition(args === 'asc' ? 'caret-down' : 'caret-up')
+  }
+      
+  useEffect(() => {
         fetch("https://api.openbrewerydb.org/v1/breweries/").then(
             data => data.json()
         ).then( 
@@ -91,6 +80,41 @@ const Home = () => {
            // clearTimeout()
         }
     }, [searchResult])
+
+    useEffect(() => {
+      newList = [];
+      indexOfLastRecord  = currentPage * recordsPerPage;
+      indexOfFirstRecord  = indexOfLastRecord - recordsPerPage;
+  
+      const getBreweryList = (breweries: any[]) => {
+        if(sortingOrder === 'asc') {
+          newList = breweries.sort(
+            (p1, p2) =>
+            (p1.name.toUpperCase() > p2.name.toUpperCase()) ? 1 : (p1.name.toUpperCase() < p2.name.toUpperCase()) ? -1 : 0
+          )
+          const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
+          const nPages = breweries && breweries.length && Math.ceil(breweries.length / recordsPerPage);
+          setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
+          setNPages(nPages)
+        } else if (sortingOrder === 'desc') {
+          newList = breweries.sort(
+            (p1, p2) =>
+            (p1.name.common.toUpperCase() < p2.name.common.toUpperCase()) ? 1 : (p1.name.common.toUpperCase() > p2.name.common.toUpperCase()) ? -1 : 0
+          )
+          const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
+          const nPages = breweries && breweries.length && Math.ceil(breweries.length / recordsPerPage);
+          setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
+          setNPages(nPages)
+        } else {
+          const currentRecords = breweries && breweries.length && breweries.slice(indexOfFirstRecord, indexOfLastRecord);
+          const nPages = breweries && breweries.length && Math.ceil(breweries.length / recordsPerPage);
+          setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
+          setNPages(nPages)
+        }
+      }
+  
+    }, [breweries, sortingOrder, currentPage, recordsPerPage]);
+
 
     /** this function will wait for a while till be affected --> debounce */
     // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,12 +160,12 @@ const Home = () => {
         </TableBody>
       </Table>
     </TableContainer>
-    {/* <Pagination
+    <Pagination
             onClick={setCurrent}
             currentPage={currentPage}
             numOfPages={nPages}
             maxVisible={totalVisiblePageNumbers}
-          /> */}
+          />
         </div>
         </>
     )
