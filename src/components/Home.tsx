@@ -11,6 +11,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from 'react-router-dom';
+import Pagination from './Pagination';
 
 export interface Brewery {
     id: string
@@ -19,6 +20,11 @@ export interface Brewery {
     city: string
     country: string
 }
+
+// let newList: any[];
+// let indexOfLastRecord: number;
+// let indexOfFirstRecord: number;
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -43,10 +49,35 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const Home = () => {
     const [searchResult, setSearchResult] = useState("")
     const [breweries, setBreweries] = useState<Brewery[]>([])
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    // const [nPages, setNPages] = useState<number>(1);
+    // const [totalVisiblePageNumbers] = useState<number>(5);
+    // const [recordsPerPage] = useState<number>(5);
 
     const getSearchResult = (search: string) => {
+      setCurrentPage(1)
       setSearchResult(search)
       }
+
+      // const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
+      //   const nPages = countries && countries.length && Math.ceil(countries.length / recordsPerPage);
+      //   setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
+      //   setNPages(nPages)
+      // } else if (sortingOrder === 'desc') {
+      //   newList = countries.sort(
+      //     (p1, p2) =>
+      //     (p1.name.common.toUpperCase() < p2.name.common.toUpperCase()) ? 1 : (p1.name.common.toUpperCase() > p2.name.common.toUpperCase()) ? -1 : 0
+      //   )
+      //   const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
+      //   const nPages = countries && countries.length && Math.ceil(countries.length / recordsPerPage);
+      //   setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
+      //   setNPages(nPages)
+      // } else {
+      //   const currentRecords = countries && countries.length && countries.slice(indexOfFirstRecord, indexOfLastRecord);
+      //   const nPages = countries && countries.length && Math.ceil(countries.length / recordsPerPage);
+      //   setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
+      //   setNPages(nPages)
+      // }
 
     // console.log("Component is rendered")
     useEffect(() => {
@@ -68,7 +99,6 @@ const Home = () => {
     
     return (
       <>
-       {console.log("This is search result", searchResult)}
         <div>
           <div>
             <SearchAppBar getSearchResult={getSearchResult}/>
@@ -106,6 +136,12 @@ const Home = () => {
         </TableBody>
       </Table>
     </TableContainer>
+    {/* <Pagination
+            onClick={setCurrent}
+            currentPage={currentPage}
+            numOfPages={nPages}
+            maxVisible={totalVisiblePageNumbers}
+          /> */}
         </div>
         </>
     )
