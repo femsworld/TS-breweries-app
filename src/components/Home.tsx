@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import SearchAppBar from './SearchAppBar'
-import Details from './Details';
 
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -11,8 +10,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from 'react-router-dom';
-import Pagination from './Pagination';
-
+// import Pagination from './Pagination';
+// import MyPagination from './Pagination';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 export interface Brewery {
     id: string
     name: string
@@ -20,10 +21,6 @@ export interface Brewery {
     city: string
     country: string
 }
-
-let newList: any[];
-let indexOfLastRecord: number;
-let indexOfFirstRecord: number;
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -50,74 +47,20 @@ const Home = () => {
     const [searchResult, setSearchResult] = useState("")
     const [currentRecords, setCurrentRecords] = useState<any[]>(['']);
     const [breweries, setBreweries] = useState<Brewery[]>([])
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [nPages, setNPages] = useState<number>(1);
-    const [totalVisiblePageNumbers] = useState<number>(5);
-    const [recordsPerPage] = useState<number>(5);
-    const [sortingOrder, setSortingOrder] = useState<string>('');
-    const [sortingIconPosition, setSortingIconPosition] = useState<string>('sort');
-
-    const getSearchResult = (search: string) => {
-      setCurrentPage(1)
-      setSearchResult(search)
-      }
-
-      const setCurrent = (curr: number) => setCurrentPage(curr);
-
-      const sort = (args: string) => {
-      setSortingOrder(args)
-      setSortingIconPosition(args === 'asc' ? 'caret-down' : 'caret-up')
-  }
-      
-  // useEffect(() => {
-  //       fetch("https://api.openbrewerydb.org/v1/breweries/").then(
-  //           data => data.json()
-  //       ).then( 
-  //           (data: Brewery[]) => {
-  //               setBreweries(data.filter(c => c.name.includes(searchResult)))
-  //           })
-  //       return () => {
-  //          // clearTimeout()
-  //       }
-  //   }, [searchResult])
-
+    const [page, setPage] = useState(1);
+   
+  const setCurrent = (event: React.ChangeEvent<unknown>, page: number) => {
+    setPage(page);
+    console.log("I am on this", page)
+    // Add your logic to fetch and display data for the selected page
+  }; 
+  const getSearchResult = (search: string) => {
+    setPage(1)
+    setSearchResult(search)
+    }
     useEffect(() => {
-      newList = [];
-      indexOfLastRecord  = currentPage * recordsPerPage;
-      indexOfFirstRecord  = indexOfLastRecord - recordsPerPage;
-      const getBreweryList = (breweries: any[]) => {
-        if(sortingOrder === 'asc') {
-          newList = breweries.sort(
-            (p1, p2) =>
-            (p1.name.toUpperCase() > p2.name.toUpperCase()) ? 1 : (p1.name.toUpperCase() < p2.name.toUpperCase()) ? -1 : 0
-          )
-          const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
-          const nPages = breweries && breweries.length && Math.ceil(breweries.length / recordsPerPage);
-          setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
-          setNPages(nPages)
-        } else if (sortingOrder === 'desc') {
-          newList = breweries.sort(
-            (p1, p2) =>
-            (p1.name.common.toUpperCase() < p2.name.common.toUpperCase()) ? 1 : (p1.name.common.toUpperCase() > p2.name.common.toUpperCase()) ? -1 : 0
-          )
-          const currentRecords = newList.slice(indexOfFirstRecord, indexOfLastRecord);
-          const nPages = breweries && breweries.length && Math.ceil(breweries.length / recordsPerPage);
-          setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
-          setNPages(nPages)
-        } else {
-          const currentRecords = breweries && breweries.length && breweries.slice(indexOfFirstRecord, indexOfLastRecord);
-          const nPages = breweries && breweries.length && Math.ceil(breweries.length / recordsPerPage);
-          setCurrentRecords(Array.isArray(currentRecords) ? currentRecords : [])
-          setNPages(nPages)
-        }
-      }
-      // const filteredData = (data: any[]) => {
-      //   const newArray =  _.filter(data, (item) => item.name.toLowerCase().startsWith(searchResult.toLowerCase()))
-      //       return newArray
-      //     }
-      //     const data = searchResult ? filteredData(breweries) : breweries
       
-      fetch("https://api.openbrewerydb.org/v1/breweries/").then(
+      fetch(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=5`).then(
             data => data.json()
         ).then( 
             (data: Brewery[]) => {
@@ -128,7 +71,7 @@ const Home = () => {
         }
         // getBreweryList(data)
 
-    }, [searchResult, breweries, sortingOrder, currentPage, recordsPerPage]);
+    }, [searchResult, page]);
 
 
     return (
@@ -170,12 +113,13 @@ const Home = () => {
         </TableBody>
       </Table>
     </TableContainer>
-    <Pagination
-            onClick={setCurrent}
-            currentPage={currentPage}
-            numOfPages={nPages}
-            maxVisible={totalVisiblePageNumbers}
-          />
+          <Stack spacing={2}>
+      <Pagination 
+        count={10} 
+        page={page}
+        onChange={setCurrent}
+      />
+    </Stack>
         </div>
         </>
     )
