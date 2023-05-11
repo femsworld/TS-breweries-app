@@ -70,14 +70,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchAppBar(props: SearchProps) {
-  const keyword = useInput() // call the custom hooks here
+  const keyword = useInput()
 
   useEffect(() => {
     if(props.getSearchResult) {
       props.getSearchResult(keyword.value)
     }
 }, [keyword]);
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
@@ -97,7 +96,7 @@ export default function SearchAppBar(props: SearchProps) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            <h4 className='linkHome' style={{ color: 'aliceblue', textDecoration: 'none' }}> <Link to={`/`}> Home </Link></h4> 
+            <h4 > Home </h4> 
           </Typography>
           <Search>
             <SearchIconWrapper>

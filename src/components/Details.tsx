@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom'
+
 import SearchAppBar from './SearchAppBar';
-import { useFetch } from './hooks/useFetch';
 
 import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { CircularProgress, Alert } from '@mui/material';
-import { error } from 'console';
-import { Box, List, ListItem, Typography } from '@mui/material';
-
-
 
 export interface BreweryPage {
   id: string
@@ -60,12 +49,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Details = () => {
   const { id } = useParams();
   const [detailsPage, setDetailsPage] = useState<BreweryPage | null>(null)
-
   const url = "https://api.openbrewerydb.org/v1/breweries/" + id;
-
-  // const { breweries, loading, error } = useFetch({ url });
-  // console.log("This is breweries", breweries)
-
   useEffect(() => {
     fetch(url).then(result => {
       if(!result.ok) {
@@ -75,11 +59,13 @@ const Details = () => {
     })
     .then(data => setDetailsPage(data))
   }, [url])
-
   return (
     <>
       <SearchAppBar />
+      <div>
       <h1 className='detailsPage'>Detail Page</h1>
+      <span> <Link to={`/`}> <button>Return Home</button> </Link> </span>
+      </div>
       <div>
         <ul>
         <li>ID: {detailsPage?.id}</li>

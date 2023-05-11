@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+
 import SearchAppBar from './SearchAppBar'
 
 import { styled } from '@mui/material/styles';
@@ -10,10 +11,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from 'react-router-dom';
-// import Pagination from './Pagination';
-// import MyPagination from './Pagination';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+
 export interface Brewery {
     id: string
     name: string
@@ -21,7 +21,6 @@ export interface Brewery {
     city: string
     country: string
 }
-
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -37,7 +36,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
     },
-    // hide last border
     '&:last-child td, &:last-child th': {
       border: 0,
     },
@@ -45,35 +43,30 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const Home = () => {
     const [searchResult, setSearchResult] = useState("")
-    const [currentRecords, setCurrentRecords] = useState<any[]>(['']);
+    // const [currentRecords, setCurrentRecords] = useState<any[]>(['']);
     const [breweries, setBreweries] = useState<Brewery[]>([])
     const [page, setPage] = useState(1);
+    const perPage: number = 5
    
   const setCurrent = (event: React.ChangeEvent<unknown>, page: number) => {
     setPage(page);
     console.log("I am on this", page)
-    // Add your logic to fetch and display data for the selected page
   }; 
+
   const getSearchResult = (search: string) => {
     setPage(1)
     setSearchResult(search)
     }
-    useEffect(() => {
-      
-      fetch(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=5`).then(
+    useEffect(() => { 
+      fetch(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`).then(
             data => data.json()
         ).then( 
             (data: Brewery[]) => {
                 setBreweries(data.filter(c => c.name.includes(searchResult)))
             })
         return () => {
-           // clearTimeout()
         }
-        // getBreweryList(data)
-
-    }, [searchResult, page]);
-
-
+    }, [searchResult, page, breweries]);
     return (
       <>
         <div>
