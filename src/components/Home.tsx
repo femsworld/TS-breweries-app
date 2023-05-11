@@ -11,8 +11,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import axios from 'axios';
 
 export interface Brewery {
     id: string
@@ -46,27 +48,53 @@ const Home = () => {
     // const [currentRecords, setCurrentRecords] = useState<any[]>(['']);
     const [breweries, setBreweries] = useState<Brewery[]>([])
     const [page, setPage] = useState(1);
-    const perPage: number = 5
+    const [perPage, setPerPage] = useState(10);
    
-  const setCurrent = (event: React.ChangeEvent<unknown>, page: number) => {
-    setPage(page);
-    console.log("I am on this", page)
-  }; 
+  // const handleChange = (event: React.ChangeEvent<unknown> | null, newPage: number) => {
+  //   setPage(newPage);
+  // }; 
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    handleFetch(value)
+  };
+
+  // const handleChangeRowsPerPage = (
+  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  // ) => {
+  //   setPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const getSearchResult = (search: string) => {
     setPage(1)
     setSearchResult(search)
     }
+    const handleFetch = (page: number) => {
+      console.log("I am on this", page)
+      axios.get(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`)
+      .then((response) => setBreweries(response.data))
+    }
+    
     useEffect(() => { 
-      fetch(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`).then(
-            data => data.json()
-        ).then( 
-            (data: Brewery[]) => {
-                setBreweries(data.filter(c => c.name.includes(searchResult)))
-            })
-        return () => {
-        }
-    }, [searchResult, page, breweries]);
+      handleFetch(page)
+        // axios.get(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`)
+        // .then((response) => setBreweries(response.data))
+
+        // console.log("I am on this", page)
+      
+      // fetch(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`).then(
+      //       res => res.json()
+      //   ).then( 
+      //       (data: Brewery[]) => {
+      //           // setBreweries(data.filter(c => c.name.includes(searchResult)))
+      //           setBreweries(data)
+      //           // console.log("Fetched data", data)
+      //       })
+        // return () => {
+        // }
+    }, []);
+    // console.log("Fetched data", breweries)
     return (
       <>
         <div>
@@ -110,9 +138,23 @@ const Home = () => {
       <Pagination 
         count={10} 
         page={page}
-        onChange={setCurrent}
+        onChange={handleChange}
       />
     </Stack>
+    {/* <TablePagination
+      component="div"
+      count={100}
+      page={page - 1}
+      onPageChange={setCurrent}
+      rowsPerPage={perPage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
+    /> */}
+    {/* <Pagination 
+        onClick={handleChange} 
+        currentPage={page}
+        numOfPages={10}
+        maxVisible={10}
+      /> */}
         </div>
         </>
     )
