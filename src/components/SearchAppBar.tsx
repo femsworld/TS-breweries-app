@@ -103,7 +103,7 @@ export default function SearchAppBar(props: SearchProps) {
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search for brewery…"
+              placeholder="Search by city"
               inputProps={{ 'aria-label': 'search' }}
               {...keyword}
             />

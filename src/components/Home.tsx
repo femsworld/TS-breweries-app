@@ -44,64 +44,55 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }));
 
 const Home = () => {
-    const [searchResult, setSearchResult] = useState("")
-    // const [currentRecords, setCurrentRecords] = useState<any[]>(['']);
+    const [searchString, setSearchString] = useState("")
+    const [currentRecords, setCurrentRecords] = useState<Brewery[]>([]);
     const [breweries, setBreweries] = useState<Brewery[]>([])
     const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(10);
-   
-  // const handleChange = (event: React.ChangeEvent<unknown> | null, newPage: number) => {
-  //   setPage(newPage);
-  // }; 
+    const [perPage, setPerPage] = useState(5);
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
 
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
-    handleFetch(value)
+   handleFetch(value)
   };
 
-  // const handleChangeRowsPerPage = (
-  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  // ) => {
-  //   setPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
-
   const getSearchResult = (search: string) => {
-    setPage(1)
-    setSearchResult(search)
-    }
-    const handleFetch = (page: number) => {
-      console.log("I am on this", page)
-      axios.get(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`)
-      .then((response) => setBreweries(response.data))
-    }
-    
-    useEffect(() => { 
-      handleFetch(page)
-        // axios.get(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`)
-        // .then((response) => setBreweries(response.data))
+      setSearchString(search)
+  };
+  
+       const handleFetch = (page: number) => {
+      console.log("before fetch", page);
+      axios
+        .get(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`)
+        .then((response) => {
+          setBreweries(response.data);
+          setCurrentRecords(response.data);
+          setPage(page); // Update the page state here
+          setLoading(false)
+          console.log("after fetch", page);
+        })
+        .catch((error) => {
+          setLoading(false)
+          setError(error.message)
+        });
+    };
 
-        // console.log("I am on this", page)
-      
-      // fetch(`https://api.openbrewerydb.org/v1/breweries?page=${page}&per_page=${perPage}`).then(
-      //       res => res.json()
-      //   ).then( 
-      //       (data: Brewery[]) => {
-      //           // setBreweries(data.filter(c => c.name.includes(searchResult)))
-      //           setBreweries(data)
-      //           // console.log("Fetched data", data)
-      //       })
-        // return () => {
-        // }
-    }, []);
-    // console.log("Fetched data", breweries)
+    useEffect(() => { 
+        if(searchString.length > 0) {
+        setCurrentRecords(breweries.filter((c) => c.city.toLowerCase().includes(searchString.toLowerCase())));
+      } else {
+        handleFetch(page)
+      }
+    }, [searchString]);
+
     return (
       <>
         <div>
           <div>
             <SearchAppBar getSearchResult={getSearchResult}/>
-            </div>
-            <TableContainer className='TableContainer' component={Paper}>
+          </div>
+          <TableContainer className='TableContainer' component={Paper}>
       <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -115,7 +106,9 @@ const Home = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {breweries.map((item, index) => (
+            {!loading && error && <p>{error}</p>}
+            {loading && <p>Loading ...</p>}
+            {!loading && !error && currentRecords.map((item, index) => (
             <StyledTableRow key={item.id}>
               <StyledTableCell component="th" scope="row">
                 {index + 1}
@@ -134,27 +127,12 @@ const Home = () => {
         </TableBody>
       </Table>
     </TableContainer>
-          <Stack spacing={2}>
+    <Typography>Page: {page} </Typography>
       <Pagination 
         count={10} 
         page={page}
         onChange={handleChange}
       />
-    </Stack>
-    {/* <TablePagination
-      component="div"
-      count={100}
-      page={page - 1}
-      onPageChange={setCurrent}
-      rowsPerPage={perPage}
-      onRowsPerPageChange={handleChangeRowsPerPage}
-    /> */}
-    {/* <Pagination 
-        onClick={handleChange} 
-        currentPage={page}
-        numOfPages={10}
-        maxVisible={10}
-      /> */}
         </div>
         </>
     )
