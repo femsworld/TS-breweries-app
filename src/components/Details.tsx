@@ -12,14 +12,14 @@ export interface BreweryPage {
   name: string
   brewery_type: string
   address_1: string
-  address_2: null
-  address_3: null
+  address_2?: string
+  address_3?: string
   city: string
   state_province: string
   postal_code: string
   country: string
-  longitude: string
-  latitude: string
+  longitude?: string
+  latitude?: string
   phone: string
   website_url: string
   state: string
@@ -72,14 +72,14 @@ const Details = () => {
         <li>Name: {detailsPage?.name}</li>
         <li>Brewery Type: {detailsPage?.brewery_type}</li>
         <li>Address 1: {detailsPage?.address_1}</li>
-        <li>Address 2: {detailsPage?.address_2}</li>
-        <li>Address 3: {detailsPage?.address_3}</li>
+        { detailsPage?.address_2 && <li>Address 2: {detailsPage?.address_2}</li>}
+        { detailsPage?.address_3 && <li>Address 3: {detailsPage?.address_3}</li>}
         <li>City: {detailsPage?.city}</li>
         <li>State Province: {detailsPage?.state_province}</li>
         <li>Postal Code: {detailsPage?.postal_code}</li>
         <li>Country: {detailsPage?.country}</li>
-        <li>Longitude: {detailsPage?.longitude}</li>
-        <li>Latitude: {detailsPage?.latitude}</li>
+        {detailsPage?.longitude && <li>Longitude: {detailsPage?.longitude}</li>}
+        {detailsPage?.latitude && <li>Latitude: {detailsPage?.latitude}</li>}
         <li>Phone: {detailsPage?.phone}</li>
         <li>Website: {detailsPage?.website_url}</li>
         <li>State: {detailsPage?.state}</li>
